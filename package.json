@@ -7,7 +7,9 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "postinstall": "node scripts/postinstall.js"
+    "postinstall": "patch-package",
+    "prebuild": "node src/scripts/prebuild.js"
+
   },
   "dependencies": {
     "expo": "~53.0.22",

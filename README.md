@@ -8,7 +8,9 @@ It includes a custom **Expo Native Module** called `hello-module`.
 ## 📦 Included Module
 
 ### `hello-module`
+
 A custom Expo module demonstrating:
+
 - Function (`sayHello`).
 - When called return a message from native side.
 
@@ -17,7 +19,10 @@ A custom Expo module demonstrating:
 ## 🚀 Getting Started
 
 ### Install dependencies
+
 ```sh
+yarn prebuild
+- then
 yarn install
 
 Android -
@@ -31,6 +36,7 @@ cd ios && pod install && cd ..
 ```
 
 ### Usage
+
 ```sh
 import { sayHello } from "hello-module";
 
@@ -39,6 +45,7 @@ Alert.alert("Native says:", msg);
 ```
 
 ### Example
+
 ```sh
 import { sayHello } from "hello-module";
 import { Button, View } from "react-native";
@@ -61,12 +68,15 @@ export default function App() {
 ### Troubleshooting
 
 - If you get errors after modifying native code, try cleaning the build:
+
 ```sh
 cd ios && pod install --repo-update
 cd ..
 yarn ios
 ```
+
 - For Android, clean Gradle:
+
 ```sh
 cd android && ./gradlew clean
 cd ..
