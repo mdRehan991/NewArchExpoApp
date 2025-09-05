@@ -1,27 +1,22 @@
-/* scripts/postinstall.js */
-
+/* src/scripts/prebuild.js */
 const { execSync } = require("child_process");
 const path = require("path");
+const fs = require("fs");
 
-function run(cmd, cwd = process.cwd()) {
-  console.log(`\n➡️  Running: ${cmd} (in ${cwd})\n`);
+function run(cmd, cwd) {
+  console.log(`\n➡️ ${cmd} (in ${cwd})\n`);
   execSync(cmd, { stdio: "inherit", cwd });
 }
 
-// Path to your local module
-const helloModulePath = path.join(
-  __dirname,
-  "..",
-  "src",
-  "modules",
-  "hello-module"
-);
+const helloModule = path.join(__dirname, "..", "modules", "hello-module");
 
-// Step 1: install module dependencies
-run("yarn install", helloModulePath);
+if (!fs.existsSync(helloModule)) {
+  console.warn("⚠️ hello-module not found, skipping prebuild.");
+  process.exit(0);
+}
 
-// Step 2: build the module
-run("yarn build", helloModulePath);
+// Install deps
+run("yarn install", helloModule);
 
-// Step 3: run patch-package at root
-run("yarn patch-package", path.join(__dirname, ".."));
+// Build once (prefer tsc, fallback to yarn build)
+run("yarn tsc --noEmit false || yarn build", helloModule);
