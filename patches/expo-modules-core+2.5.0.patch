@@ -1,0 +1,46 @@
+diff --git a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/AutoSizingStack.swift b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/AutoSizingStack.swift
+index 3c855b7..6f3b398 100644
+--- a/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/AutoSizingStack.swift
++++ b/node_modules/expo-modules-core/ios/Core/Views/SwiftUI/AutoSizingStack.swift
+@@ -30,14 +30,21 @@ extension ExpoSwiftUI {
+       if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
+         if proxy !== ShadowNodeProxy.SHADOW_NODE_MOCK_PROXY {
+           content.overlay {
+-            content.fixedSize(horizontal: axis.contains(.horizontal), vertical: axis.contains(.vertical))
++            content
++              .fixedSize(horizontal: axis.contains(.horizontal), vertical: axis.contains(.vertical))
+               .hidden()
+-              .onGeometryChange(for: CGSize.self, of: { proxy in proxy.size }, action: { size in
+-                var size = size
+-                size.width = axis.contains(.horizontal) ? size.width : ShadowNodeProxy.UNDEFINED_SIZE
+-                size.height = axis.contains(.vertical) ? size.height : ShadowNodeProxy.UNDEFINED_SIZE
+-                proxy.setViewSize?(size)
+-              })
++              .background(
++                GeometryReader { geo in
++                  Color.clear
++                    .preference(key: SizePreferenceKey.self, value: geo.size)
++                }
++              )
++          }
++          .onPreferenceChange(SizePreferenceKey.self) { size in
++            var size = size
++            size.width = axis.contains(.horizontal) ? size.width : ShadowNodeProxy.UNDEFINED_SIZE
++            size.height = axis.contains(.vertical) ? size.height : ShadowNodeProxy.UNDEFINED_SIZE
++            proxy.setViewSize?(size)
+           }
+         } else {
+           content
+@@ -51,3 +58,12 @@ extension ExpoSwiftUI {
+     }
+   }
+ }
++
++// MARK: - PreferenceKey Helper
++
++private struct SizePreferenceKey: PreferenceKey {
++  static var defaultValue: CGSize = .zero
++  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
++    value = nextValue()
++  }
++}
